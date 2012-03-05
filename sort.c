@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <math.h>
 
 #define Max 1000
 #define nowTime clock()/CLOCKS_PER_SEC
+#define lChild(i) 2*i
+#define rChild(i) 2*i+1
+#define parent(i) i/2
 
 int my_array[Max];
 
@@ -13,7 +17,7 @@ void print_array(int array[], int length)
 
 	printf("The sorted array is:\n");
  
-	for (j = 0; j <= length; j++)
+	for (j = 0; j < length; j++)
 		printf("%d ", array[j]);
 
 	printf("\n");
@@ -25,7 +29,7 @@ void rand_array(int array[],int length)
 
 	srand((unsigned) time(0));
 
-	for(i = 0; i <= length; i++)
+	for(i = 0; i < length; i++)
 	{
 		array[i] = rand() % 10000;
 	} 
@@ -38,19 +42,16 @@ void input_array(int array[], int *length)
 
 	while(ret = scanf("%d", &array[i]) == 1)
 	{
-		if(i == Max-1)
+		i++;
+		if(i == Max)
 		{
 			printf("\nArray is full ! \n");
 			break;
 		}
-		i ++;
 	} 
 	
 	if(ret != 1)
-	{
-		i--;
 		printf("%d numbers! \n", i+1);
-	}
 	
 	*length = i;
 }
@@ -59,7 +60,7 @@ void insert_sort(int array[], int length)
 {
 	int i, j, key; 
 	
-	for(j = 1; j <= length; j++)
+	for(j = 1; j < length; j++)
 	{
 		i = j-1;
 		key = array[j];
@@ -78,9 +79,9 @@ void bubble_sort(int array[], int length)
 {
 	int i, j, tmp;
 
-	for(j = 0; j <= length; j++)
+	for(j = 0; j < length; j++)
 	{
-		i = length;
+		i = length-1;
 
 		while(i > j)
 		{
@@ -106,7 +107,7 @@ void exchange(int *a, int *b)
 
 int partition(int array[], int start, int end)
 {
-/***************************** 方法1 ***************************
+/**************************** Method 1 *************************
 **  每一轮迭代开始时，middle = array[start], 对于i小于        **
 **  start，array[i]小于等于middle；对于i大于end，             **
 **  array[i]大于等于middle；终止时，start == end，此时，      **
@@ -132,7 +133,7 @@ int partition(int array[], int start, int end)
 *****************************************************************/
 
 
-/***************************** 方法2 ****************************
+/**************************** Method 2 **************************
 ** 每一轮迭代开始时，middle = array[start],对于i <= start,     **
 ** array[i] <= middle; 对于i > end, array[i] >= middle; 终止时 **
 ** start == end, 此时，array[start] <= middle, 再交换middle和  **
@@ -186,7 +187,7 @@ int partition(int array[], int start, int end)
 ****************************************************************/
 
 
-/****************************** 方法4 ***************************
+/*************************** Method 4 ***************************
 ** 每次迭代开始时，middle = array[end],对于k <= i,array[k] <=  **
 ** middle; 对于k >= j, array[k] >= middle; 终止时，i>=j，此时  **
 ** j左边的均小于等于middle，右边大于等于middle                 **
@@ -281,7 +282,7 @@ void shell_sort(int array[], int length)
 		for(i = 0; i < inc; i++)
 		{
 			//为每个分组进行插入排序
-			for(j = i+inc ; j <= length; j += inc)
+			for(j = i+inc ; j < length; j += inc)
 			{
 				k = j - inc;
 				key = array[j];
@@ -298,25 +299,100 @@ void shell_sort(int array[], int length)
 	
 }
 
+void max_heapify(int array[], int length, int root)
+{
+	int max, l, r;
+	
+	while(root <= length)
+	{
+		l = lChild(root);
+		r = rChild(root);
+
+		if(l <= length && array[root-1] < array[l-1])
+			max = l;
+		else
+			max = root;
+
+		if(r <= length && array[max-1] < array[r-1])
+			max = r;
+
+		if(root != max)
+		{
+			exchange(&array[root-1], &array[max-1]);
+			root = max;
+		}
+		else
+			break;
+	}
+}
+
 void heap_sort(int array[], int length)
 {
+	int i;
 
+	for(i = length/2; i > 0; i--)
+		max_heapify(array, length, i);
+
+	for(i = length-1; i > 0; i--)
+	{
+		exchange(&array[0], &array[i]);
+		max_heapify(array, i, 1);
+	}
 }
+
+void count_sort(int array[], int length, int num)
+{
+	int j, index, dv, re;
+	int count[10];
+	int brray[length];
+
+	for(j=1, dv=10; j<num; j++)
+		dv *= 10;
+	re = dv/10;
+
+	for(j=0; j<10; j++)
+		count[j] = 0;
+
+	for(j=0; j<length; j++)
+	{
+		index = (array[j]%dv)/re;
+		count[index]++; 
+	}
+	
+	for(j=1; j<10; j++)
+		count[j] += count[j-1];
+
+	for(j=length-1; j>=0 ; j--)
+	{
+		index = (array[j]%dv)/re;
+		brray[count[index]-1] = array[j];
+		count[index]--;
+	}
+
+	for(j=0; j<length; j++)
+		array[j] = brray[j];
+}  
 
 void radix_sort(int array[], int length)
 {
+	int i;
 
+	for(i=1; i<5; i++)
+	{
+		count_sort(array, length, i);
+	}
 }
 
 void usage()
 {
-	printf("Usage : sort -a -n\n\
-\t-a, array types\n\
-\t\t'i' for input array; 'r' for randam array\n\
-\t-n, sort method\n\
-\t\t'1' for insert sort\n\
-\t\t'2' for bubble sort\n\
-\t\t'3' for merge sort\n");
+	printf("\
+Usage : sort -a -n\n\
+	-a, array types\n\
+		'i' for input array; 'r' for randam array\n\
+	-n, sort method\n\
+		'1' for insert sort\n\
+		'2' for bubble sort\n\
+		'3' for merge sort\n");
 }
 
 int main(int argc, char *argv[])
@@ -372,11 +448,11 @@ int main(int argc, char *argv[])
 		break;
 	case 3:
 		printf("merge sort:\n");
-		merge_sort(my_array, 0, length);
+		merge_sort(my_array, 0, length-1);
 		break;
 	case 4:
 		printf("quick sort:\n");
-		quick_sort(my_array, 0, length);
+		quick_sort(my_array, 0, length-1);
 		break;
 	case 5:
 		printf("shell sort:\n");
@@ -390,6 +466,9 @@ int main(int argc, char *argv[])
 		printf("radix sort:\n");
 		radix_sort(my_array, length);
 		break;
+	default:
+		printf("quick sort:\n");
+		quick_sort(my_array, 0, length-1);
 	}
 
 	end = (double) nowTime;
