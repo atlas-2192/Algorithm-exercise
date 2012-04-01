@@ -14,8 +14,6 @@ int main(void)
 	int	array[Max];
 
 	input_array(array, &len);
-//	quick_sort(array, 0, len-1);
-//	print_array(array, len);
 
 	id = findid(array, len);
 	printf("The one over 1/4 is: %d\n", id);
@@ -28,6 +26,7 @@ int findid(int *array, int len)
 	int candidate, i, ntimes;
 	int test[3], count[3];
 
+	//首先排除最后三个数的干扰
 	test[0] = array[len-3];
 	test[1] = array[len-2];
 	test[2] = array[len-1];
