@@ -44,7 +44,7 @@ void input_array(int array[], int *length)
 	} 
 	
 	if(ret != 1)
-		printf("%d numbers! \n", i+1);
+		printf("%d numbers! \n", i);
 	
 	*length = i;
 }
