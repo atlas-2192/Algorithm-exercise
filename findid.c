@@ -58,15 +58,6 @@ int findid(int *array, int len)
 		}
 		else
 		{
-/*			if(isin(array[i]))
-			{
-				if(isin(candidate))
-					ntimes = 0;
-				else
-					ntimes--;
-				continue;
-			}
-*/
 			if(candidate == array[i])
 				ntimes += 3;
 			else
