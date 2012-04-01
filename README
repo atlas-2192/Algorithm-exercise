@@ -1,0 +1,9 @@
+Files:
+	libfiles: mylib.c mylib.h
+
+Compile example:
+1.Complile the lib
+	$ gcc -c mylib.c -o mylib.o
+	$ ar -rsv libmylib.a mylib.o
+2.Compile the program:
+	$ gcc allsum.c -o allsum -L. -lmylib
