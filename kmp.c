@@ -4,8 +4,8 @@
 
 /*
 * E(q-1) = {k ∈ π*[q-1] && P(k+1) is the prefix of P(q)}
-* π[q] = 1 + max{k ∈ E(q-1)}	if E(q-1) != ∅
-*      = 0			if E(q-1) == ∅
+* π[q] = 1 + max{k ∈ E(q-1)}    if E(q-1) != ∅
+*      = 0                      if E(q-1) == ∅
 */
 void comp_prefix(char *str, int *map)
 {
